@@ -1,29 +1,47 @@
-import subprocess
-import sys
+import PyInstaller.__main__
+import customtkinter
 import os
 
-print("Step 1: Forcing dependency installation on this exact Python environment...")
-# This guarantees the packages are installed to the exact Python version running this script
-subprocess.check_call([sys.executable, "-m", "pip", "install", "customtkinter", "sqlalchemy", "pyinstaller", "cryptography", "requests"])
-
-print("\nStep 2: Locating CustomTkinter...")
-import customtkinter
+# Locate CustomTkinter assets
 ctk_path = os.path.dirname(customtkinter.__file__)
 
-print("\nStep 3: Compiling the Executable...")
-import PyInstaller.__main__
+print("Starting optimized, ML-compatible build...")
+
 PyInstaller.__main__.run([
     'app.py',
     '--noconfirm',
-    '--onedir',
-    '--windowed',
+    '--onedir',          
+    '--windowed',        
     f'--add-data={ctk_path};customtkinter/',
     '--add-data=utils;utils/',
     '--add-data=model;model/',
+    
+    # Core Dependencies
     '--hidden-import=sqlalchemy',
     '--hidden-import=cryptography',
     '--hidden-import=requests',
-    '--clean'  # This wipes the cache from the previous failed builds
+    
+    # The ML Rescue Mission (Guarantees the model works)
+    '--collect-all=sklearn',
+    '--hidden-import=joblib',
+    '--hidden-import=threadpoolctl',
+    
+    # App Branding
+    '--icon=icon.ico',   
+    
+    # Aggressive Exclusions (Trimming the fat)
+    '--exclude-module=matplotlib',
+    '--exclude-module=PyQt5',
+    '--exclude-module=PySide6',
+    '--exclude-module=IPython',
+    '--exclude-module=jupyter',
+    '--exclude-module=notebook',
+    '--exclude-module=pandas',
+    '--exclude-module=seaborn',
+    '--exclude-module=pytest',
+    '--exclude-module=tkinter.test',
+    
+    '--clean'
 ])
 
-print("\n✅ Build complete! Check the 'dist/app' folder and run app.exe.")
+print("Build complete! Test the app, then run it through Inno Setup.")

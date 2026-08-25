@@ -1,16 +1,23 @@
 # -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import collect_all
+
+datas = [('C:/Users/Ujjwal Chaudhary/OneDrive/Desktop/passcraft_pro/clean_env/Lib/site-packages/customtkinter', 'customtkinter'), ('utils', 'utils'), ('model', 'model')]
+binaries = []
+hiddenimports = ['sqlalchemy', 'cryptography', 'requests', 'joblib', 'threadpoolctl']
+tmp_ret = collect_all('sklearn')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
 
 a = Analysis(
     ['app.py'],
     pathex=[],
-    binaries=[],
-    datas=[('C:/Users/Ujjwal Chaudhary/AppData/Local/Programs/Python/Python314/Lib/site-packages/customtkinter', 'customtkinter'), ('utils', 'utils'), ('model', 'model')],
-    hiddenimports=['sqlalchemy', 'cryptography', 'requests'],
+    binaries=binaries,
+    datas=datas,
+    hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['matplotlib', 'PyQt5', 'PySide6', 'IPython', 'jupyter', 'notebook', 'pandas', 'seaborn', 'pytest', 'tkinter.test'],
     noarchive=False,
     optimize=0,
 )
@@ -32,6 +39,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['icon.ico'],
 )
 coll = COLLECT(
     exe,
